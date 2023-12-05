@@ -1,0 +1,32 @@
+name: Update Readme
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - closed
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run update script
+        run: |
+           echo "PR Title: ${{ github.event.pull_request.title }}" >> readme.txt
+           DESCRIPTION=$(curl -s -H "Authorization: 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" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/gobikaponnusamy/show/pulls/${{ github.event.number }} | jq -r '.body')
+           echo "PR Description: $DESCRIPTION" >>readme.txt
+
+            
+      - uses: actions/upload-artifact@v3   
+        with:
+          name: Build    
+          path: readme.txt
+
+     
